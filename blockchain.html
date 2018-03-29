@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>ws-bc</title>
+</head>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<style type="text/css">
+	body{
+		background-color: gainsboro;
+		font-family: arial;
+	}
+	#log{
+		width:100%;
+		height: 500px;
+		overflow-y: scroll;
+		background-color: white;
+		margin:10px;
+		border-bottom:20px solid white;
+	}
+	input[type=text]{
+		width:500px;
+		height: 50px;
+		margin:10px;
+		font-size: 1.2em;
+		padding: 3px;
+		border-radius: 25px;
+		border:1px solid grey;
+		outline: 0;
+		padding-left: 25px;
+
+	}
+	.blocks{
+		/*width:30%;*/
+		/*min-height: 300px;*/
+		background-color: gainsboro;
+		margin:1.5%;
+		/*float: left;*/
+	}
+	p{
+		margin:4px;
+		font-weight: 100;
+		font-size: 0.9em;
+		width:100%;
+	}
+	.info-title{
+		font-size: 1.2em;
+		font-style: bold;
+	}
+
+</style>
+<body>
+<div id="ack"></div>
+<div id="log">
+	<!-- <div class="blocks">
+		<p><span class="info-title">id : </span>loremlorem</p>
+		<p><span class="info-title">data : </span>lorem</p>
+		<p><span class="info-title">prevHash : </span>lorem Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
+tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
+		</p>
+		<p><span class="info-title">hash : </span>loremlorem Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
+tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,</p>
+		<p><span class="info-title">nonce : </span>lorem</p>
+		<p><span class="info-title">timestamp : </span>lorem</p>
+		<p><span class="info-title">gen-time : </span>lorem</p>
+	</div> -->
+	
+</div>
+<div id="addblock">
+<input type="text" name="text" placeholder="insert data and create new block(hit enter)" id="text">
+
+</div>
+<script type="text/javascript">
+	var sock=new WebSocket("ws://localhost:5001");
+	sock.onopen=function (event){
+		sock.send('start');
+		document.getElementById('ack').innerHTML='socket is working.....';
+
+	};
+	sock.onmessage=function(event){
+		var holo=JSON.parse(event.data).chain;
+		console.log(holo.length);
+		log.innerHTML='';
+		for (var i = 0; i < holo.length; i++){
+			log.innerHTML+='<div class="blocks" ><p><span class="info-title">id : </span>'+holo[i].index+'</p><p><span class="info-title">data : </span>'+holo[i].data+'</p><p><span class="info-title">prevHash : </span>'+holo[i].prevhash+'</p><p><span class="info-title">hash : </span>'+holo[i].hash+'</p><p><span class="info-title">nonce : </span>'+holo[i].nonce+'</p><p><span class="info-title">timestamp : </span>'+holo[i].timestamp+'</p><p><span class="info-title">gen-time : </span>'+holo[i].gen_time+'ms</p></div>';
+		}
+	}
+	// document.querySelector('button').onclick=function(){
+		// var text=document.getElementById('text').value;
+		
+	// }
+	document.addEventListener('keydown',function (e){
+            var code = e.keyCode ? e.keyCode : e.which;
+            var text=document.getElementById('text').value;
+            if(code===13 && text.length){
+              console.log("enter key pressed");
+              document.getElementById('text').value='';
+              sock.send(text);
+            }
+        });
+</script>
+</body>
+</html>
